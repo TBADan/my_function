@@ -1,10 +1,17 @@
 import  {Client, Databases} from 'node-appwrite'
 
+const { Configuration, OpenAIApi } = require('openai');
+
 ///Enviroment variables
 const PROJECT_ID = process.env.PROJECT_ID
 const DB_ID = process.env.DB_ID
 const COLLECTION_ID_CONNECTIONS = process.env.COLLECTION_ID_CONNECTIONS
 
+const configuration = new Configuration({
+    apiKey: process.env.OPENAI_API_KEY,
+});
+
+const openai = new OpenAIApi(configuration);
 
 ////Function
 export default async ({req, res, log, error})=>{
@@ -25,19 +32,25 @@ export default async ({req, res, log, error})=>{
 
         const specificAttributes = documents.map(doc => {
             return {
-                id: doc.Source,
+                Source: doc.Source,
                 name: doc.Name,
             }
         });
         
         specificAttributes.forEach(attr => {
             const Source = attr.Source;
-            const name = attr.name;
-            // You can now use id and name variables as needed
-            console.log(`Source: ${Source}, Name: ${name}`);
-        });
+            const name = attr.name; 
 
-    
+            const prompt = `The source is ${Source} and the name is ${name}.`
+
+            const completion = openai.createCompletion({
+                model: 'text-davinci-003',
+                prompt: prompt,
+                max_tokens: 100
+            });
+            const gptOutput = gtpResponse.data.choices[0].text.trim();
+            console.log(`GPT Response: ${gptOutput}`);
+        });
 
         return res.json(specificAttributes)
         
