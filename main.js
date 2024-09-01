@@ -31,10 +31,10 @@ export default async ({req, res, log, error})=>{
         });
         
         specificAttributes.forEach(attr => {
-            const id = attr.id;
+            const id = attr.Source;
             const name = attr.name;
             // You can now use id and name variables as needed
-            console.log(`ID: ${id}, Name: ${name}`);
+            console.log(`Source: ${Source}, Name: ${name}`);
         });
 
     
