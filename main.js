@@ -56,7 +56,7 @@ export default async ({req, res, log, error})=>{
             }
         });
 
-        return res.json(specificAttributes)
+        return res.json(`ChatGPT Response: ${gptOutput}`)
         
     }
     return res.send('Hello World')
