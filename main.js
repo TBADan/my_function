@@ -1,6 +1,6 @@
 import  {Client, Databases} from 'node-appwrite'
 
-const { Configuration, OpenAIApi } = require('openai');
+import { Configuration, OpenAIApi } from 'openai';
 
 ///Enviroment variables
 const PROJECT_ID = process.env.PROJECT_ID
@@ -37,19 +37,24 @@ export default async ({req, res, log, error})=>{
             }
         });
         
-        specificAttributes.forEach(attr => {
+        specificAttributes.forEach(async attr => {
             const Source = attr.Source;
             const name = attr.name; 
 
             const prompt = `The source is ${Source} and the name is ${name}.`
 
-            const completion = openai.createCompletion({
-                model: 'text-davinci-003',
-                prompt: prompt,
-                max_tokens: 100
-            });
-            const gptOutput = gtpResponse.data.choices[0].text.trim();
-            console.log(`GPT Response: ${gptOutput}`);
+            try {
+                const completion = await openai.createCompletion({
+                    model: 'text-davinci-003',
+                    prompt: prompt,
+                    maxTokens: 100
+                });
+                const gptOutput = completion.data.choices[0].text.trim();
+                console.log(`ChatGPT Response: ${gptOutput}`);
+
+            } catch (error) {
+                console.error('Error calling OpenAI API:', error)
+            }
         });
 
         return res.json(specificAttributes)
