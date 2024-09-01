@@ -1,6 +1,6 @@
-import  {Client, Databases} from 'node-appwrite'
+import OpenAI from 'openai';
+import  {Client, Databases} from 'node-appwrite';
 
-import OpenAI from "openai";
 
 ///Enviroment variables
 const PROJECT_ID = process.env.PROJECT_ID
@@ -20,6 +20,7 @@ export default async ({req, res, log, error})=>{
     .setProject(PROJECT_ID)
 
     const db = new Databases(client)
+    const openai = new OpenAI();
 
     if(req.method == 'GET'){
         const response = await db.listDocuments(
@@ -43,20 +44,20 @@ export default async ({req, res, log, error})=>{
             const prompt = `The source is ${Source} and the name is ${name}.`
 
             try {
-                const completion = await openai.createCompletion({
-                    model: 'text-davinci-003',
-                    prompt: prompt,
-                    maxTokens: 100
+                const response = await openai.chat.completions.create({
+                    model: 'gpt-3.5-turbo',
+                    max_tokens: parseInt(process.env.OPENAI_MAX_TOKENS ?? '512'),
+                    messages: prompt,
                 });
-                const gptOutput = completion.data.choices[0].text.trim();
-                console.log(`ChatGPT Response: ${gptOutput}`);
+                const gptOutput = response.choicess[0].message.content;
+                return res.json({ ok: true, completion }, 200);
 
             } catch (error) {
                 console.error('Error calling OpenAI API:', error)
             }
         });
 
-        return res.json(`ChatGPT Response: ${gptOutput}`)
+        return res.json(`ChatGPT Response:`)
         
     }
     return res.send('Hello World')
