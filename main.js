@@ -54,9 +54,9 @@ export default async ({req, res, log, error})=>{
             } catch (error) {
                 console.error('Error calling OpenAI API:', error)
             }
-            return res.json({ ok: true, completion }, 200);
         });
-
+        
+        return res.json({ ok: true, completion }, 200);
         
     }
 }
