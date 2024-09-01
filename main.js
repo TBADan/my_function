@@ -57,7 +57,7 @@ export default async ({req, res, log, error})=>{
             }
         });
         
-        return res.json(responses, 200);
+        return res.json(response, 200);
         
         
     }
