@@ -25,13 +25,13 @@ export default async ({req, res, log, error})=>{
 
         const specificAttributes = documents.map(doc => {
             return {
-                id: doc.$id,
+                id: doc.Source,
                 name: doc.Name,
             }
         });
         
         specificAttributes.forEach(attr => {
-            const id = attr.Source;
+            const Source = attr.Source;
             const name = attr.name;
             // You can now use id and name variables as needed
             console.log(`Source: ${Source}, Name: ${name}`);
