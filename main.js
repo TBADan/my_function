@@ -57,7 +57,7 @@ export default async ({req, res, log, error})=>{
             }
         });
         
-        return res.json(gptOutput);
+        return res.json(responses, 200);
         
         
     }
