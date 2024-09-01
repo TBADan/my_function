@@ -7,11 +7,9 @@ const PROJECT_ID = process.env.PROJECT_ID
 const DB_ID = process.env.DB_ID
 const COLLECTION_ID_CONNECTIONS = process.env.COLLECTION_ID_CONNECTIONS
 
-const configuration = new Configuration({
+const openai = new OpenAIApi({
     apiKey: process.env.OPENAI_API_KEY,
 });
-
-const openai = new OpenAIApi(configuration);
 
 ////Function
 export default async ({req, res, log, error})=>{
