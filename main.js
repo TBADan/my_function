@@ -21,11 +21,18 @@ export default async ({req, res, log, error})=>{
             COLLECTION_ID_CONNECTIONS
         )
 
-        const documents = res.json(response.documents)
+        const documents = res.json(response.documents);
 
-        JSON.parse(documents).forEach((doc)=>{
-            console.log(doc)
+        const specificAttributes = documents.map(doc => {
+            return {
+                id: doc.$id,
+                name: doc.Name,
+            }
         })
+
+    
+
+        return res.json(specificAttributes)
         
     }
     return res.send('Hello World')
