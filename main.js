@@ -50,14 +50,14 @@ export default async ({req, res, log, error})=>{
                     messages: prompt,
                 });
                 const gptOutput = response.choicess[0].message.content;
-                return res.json({ ok: true, completion }, 200);
+                
 
             } catch (error) {
                 console.error('Error calling OpenAI API:', error)
             }
         });
 
-        return res.json(`ChatGPT Response:`)
+        return res.json({ ok: true, completion }, 200);
         
     }
     return res.send('Hello World')
