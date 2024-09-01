@@ -30,7 +30,7 @@ export default async ({req, res, log, error})=>{
 
         const documents = response.documents;
 
-        const specificAttributes = docs.map(doc => ({
+        const specificAttributes = documents.map(doc => ({
             Source: doc.Source,
             name: doc.Name,
         }));
