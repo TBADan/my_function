@@ -39,7 +39,7 @@ export default async ({req, res, log, error})=>{
             const Source = attr.Source;
             const name = attr.name; 
 
-            const prompt = `The source is ${Source} and the name is ${name}.` ///Prompt for GPT-3
+            const prompt = `Create a simple summary of this website ${Source} and the website name is ${name}.` ///Prompt for GPT-3
 
             try {
                 const response = await openai.chat.completions.create({
@@ -48,7 +48,7 @@ export default async ({req, res, log, error})=>{
                     messages: [{ role: 'user', content: prompt }],
                 });
                 const gptOutput = response.choices[0].message.content;
-                return { ok: true, completion: gptOutput, Source: contentSource, Name: connectionName }; ///Return the completion
+                return { ok: true, completion: gptOutput }; ///Return the completion
             } catch (error) {
                 console.error('Error calling OpenAI API:', error);
                 return { ok: false, error: 'Internal Server Error' }
