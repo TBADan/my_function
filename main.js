@@ -25,13 +25,13 @@ export default async ({ req, res, log, error }) => {
 
     // Loop through each document and access its properties
     for (const document of documents) {
-      const documentId = document.$id; // Access the document ID
+      const documentId = document.frequency; // Access the document ID
 
       // Use the variables as needed
-      console.log(`Document ID: ${documentId}`);
+      console.log(`Document ID: ${frequency}`);
     }
 
-    return res.json(response.documents); // Or return a different response
+    console.log(`Document ID: ${frequency}`);
   }
 
   return res.send('Hello World');
