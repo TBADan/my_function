@@ -21,7 +21,7 @@ export default async ({req, res, log, error})=>{
             COLLECTION_ID_CONNECTIONS
         )
 
-        return res.json(response.documents)
+        return res.json(documents.frequency)
         
     }
     return res.send('Hello World')
