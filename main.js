@@ -1,6 +1,6 @@
 import  {Client, Databases} from 'node-appwrite'
 
-import { Configuration, OpenAIApi } from 'openai';
+import OpenAI from "openai";
 
 ///Enviroment variables
 const PROJECT_ID = process.env.PROJECT_ID
