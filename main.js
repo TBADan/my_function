@@ -23,7 +23,9 @@ export default async ({req, res, log, error})=>{
 
         const documents = res.json(response.documents)
 
-        return documents
+        JSON.parse(documents).forEach((doc)=>{
+            console.log(doc)
+        })
         
     }
     return res.send('Hello World')
