@@ -49,14 +49,15 @@ export default async ({req, res, log, error})=>{
                     max_tokens: parseInt(process.env.OPENAI_MAX_TOKENS ?? '512'),
                     messages: prompt,
                 });
-                const gptOutput = response.choicess[0].message.content;
-                return res.json({ ok: true, completion }, 200);
+                const gptOutput = response.choices[0].message.content;
+                return res.json({ ok: true, completion: gptOutput }, 200);
             } catch (error) {
-                console.error('Error calling OpenAI API:', error)
+                console.error('Error calling OpenAI API:', error);
+                return res.status(500).json({ ok: false, error: 'Internal Server Error' });
             }
         });
         
-        return res.json({ ok: true, completion }, 200);
+        
         
     }
 }
