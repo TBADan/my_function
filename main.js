@@ -19,7 +19,7 @@ export default async ({req, res, log, error})=>{
         const response = await db.listDocuments(
             DB_ID,
             COLLECTION_ID_CONNECTIONS
-        )
+        );
 
         const documents = response.documents;
 
@@ -28,7 +28,14 @@ export default async ({req, res, log, error})=>{
                 id: doc.$id,
                 name: doc.Name,
             }
-        })
+        });
+        
+        specificAttributes.forEach(attr => {
+            const id = attr.id;
+            const name = attr.name;
+            // You can now use id and name variables as needed
+            console.log(`ID: ${id}, Name: ${name}`);
+        });
 
     
 
