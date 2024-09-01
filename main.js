@@ -30,14 +30,12 @@ export default async ({req, res, log, error})=>{
 
         const documents = response.documents;
 
-        const specificAttributes = documents.map(doc => {
-            return {
-                Source: doc.Source,
-                name: doc.Name,
-            }
-        });
+        const specificAttributes = docs.map(doc => ({
+            Source: doc.Source,
+            name: doc.Name,
+        }));
         
-        specificAttributes.forEach(async attr => {
+        const responses = await Promise.all(specificAttributes.map(async attr => {
             const Source = attr.Source;
             const name = attr.name; 
 
@@ -47,17 +45,17 @@ export default async ({req, res, log, error})=>{
                 const response = await openai.chat.completions.create({
                     model: 'gpt-3.5-turbo',
                     max_tokens: parseInt(process.env.OPENAI_MAX_TOKENS ?? '512'),
-                    messages: prompt,
+                    messages: [{ role: 'user', content: prompt }],
                 });
                 const gptOutput = response.choices[0].message.content;
-                return res.json({ ok: true, completion: gptOutput }, 200);
+                return { ok: true, completion: gptOutput };;
             } catch (error) {
                 console.error('Error calling OpenAI API:', error);
-                return res.status(500).json({ ok: false, error: 'Internal Server Error' });
+                return { ok: false, error: 'Internal Server Error' }
             }
-        });
+        }));
         
-        return res.json(response, 200);
+        return res.json(responses, 200);
         
         
     }
