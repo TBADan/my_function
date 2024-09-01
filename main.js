@@ -20,7 +20,7 @@ export default async ({req, res, log, error})=>{
             DB_ID,
             COLLECTION_ID_CONNECTIONS
         )
-        const firstDocument = documents[0];
+
         return res.json(response.documents)
         
     }
