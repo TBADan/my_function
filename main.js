@@ -20,7 +20,9 @@ export default async ({req, res, log, error})=>{
             DB_ID,
             COLLECTION_ID_CONNECTIONS
         )
-        return res.json(response.documents.frequency)
+        const firstDocument = documents[0];
+        return res.json(response.documents)
+        
     }
     return res.send('Hello World')
 }
