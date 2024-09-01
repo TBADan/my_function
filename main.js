@@ -21,34 +21,11 @@ export default async ({req, res, log, error})=>{
             COLLECTION_ID_CONNECTIONS
         )
 
-        const jsonResponse = JSON.parse(res.text());
+        const documents = res.json(response.documents)
 
-        consol.log(jsonResponse)
+        return documents
         
     }
-    return res.send('Hello World!!!!')
+    return res.send('Hello World')
 }
 
-
-
-// // Assuming the JSON response is an array of objects
-// const jsonResponse = JSON.parse(res.text());
-
-// // Function to split the array based on a given attribute
-// function splitByAttribute(array, attribute) {
-//   const result = {};
-//   array.forEach(item => {
-//     const attributeValue = item[attribute];
-//     if (!result[attributeValue]) {
-//       result[attributeValue] = [];
-//     }
-//     result[attributeValue].push(item);
-//   });
-//   return result;
-// }
-
-// // Example usage: split the response by the "category" attribute
-// const splitResponse = splitByAttribute(jsonResponse, "category");
-
-// // Access the split data
-// console.log(splitResponse); // Output: { category1: [object1, object2], category2: [object3] }
