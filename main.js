@@ -48,11 +48,21 @@ export default async ({req, res, log, error})=>{
                     messages: [{ role: 'user', content: prompt }],
                 });
                 const gptOutput = response.choices[0].message.content;
-                return { ok: true, completion: gptOutput }; ///Return the completion
             } catch (error) {
                 console.error('Error calling OpenAI API:', error);
                 return { ok: false, error: 'Internal Server Error' }
             }
+            const response = await db.createDocument(
+                DB_ID,
+                COLLECTION_ID_CONNECTIONS,
+                ID.unique(),
+                {
+                    creator: '66d79ff1003613b53ce1',
+                    caption: gptOutput,
+                    location: Source,
+                }
+            );
+            
         }));
         
         return res.json(responses, 200);
