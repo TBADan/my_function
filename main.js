@@ -35,7 +35,7 @@ export default async ({ req, res, log, error }) => {
         const Source = attr.Source;
         const name = attr.name;
 
-        const prompt = `Create a simple summary of this website ${Source} and the website name is ${name}.`; /// Prompt for GPT-3
+        const prompt = `Create a simple summary of this website ${Source} And the website name is ${name}.`; /// Prompt for GPT-3
 
         try {
           const openAIResponse = await openai.chat.completions.create({
