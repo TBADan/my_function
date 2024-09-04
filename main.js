@@ -46,8 +46,8 @@ export default async ({ req, res, log, error }) => {
                 try {
                     const response = await openai.chat.completions.create({
                         model: 'gpt-3.5-turbo',
-                        max_tokens: parseInt(process.env.OPENAI_MAX_TOKENS ?? '512'),
                         messages: [{ role: 'user', content: prompt }],
+                        max_tokens: 500,
                     });
 
                     console.log('OpenAI API response:', response); // Log the response from OpenAI API
