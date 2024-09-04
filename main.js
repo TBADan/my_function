@@ -60,7 +60,9 @@ export default async ({ req, res, log, error }) => {
 
                     // Insert the summary into the new collection
                     const document = await db.createDocument(DB_ID, COLLECTION_ID_SUMMARIES, {
-                        userId: userId,
+                        name:'Gather.AI',
+                        accountId: '66d79ff1000d0443d726',
+                        username:'Gather.AI',
                         Source: Source,
                         name: name,
                         summary: gptOutput,
