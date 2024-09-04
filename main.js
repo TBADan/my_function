@@ -25,8 +25,7 @@ export default async ({ req, res, log, error }) => {
         const userId = req.query.userId; // Extract user ID from request query parameters
 
         if (!userId) {
-            res.writeHead(400, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ error: 'User ID is required' }));
+            return res.json({ error: 'User ID is required' }, 400);
         }
 
         try {
@@ -76,15 +75,12 @@ export default async ({ req, res, log, error }) => {
                 }
             }));
 
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify(responses));
+            return res.json(responses, 200);
         } catch (error) {
             console.error('Error interacting with Appwrite:', error); // Log any errors from Appwrite
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ ok: false, error: 'Error interacting with Appwrite' }));
+            return res.json({ ok: false, error: 'Error interacting with Appwrite' }, 500);
         }
     } else {
-        res.writeHead(405, { 'Content-Type': 'application/json' });
-        return res.end(JSON.stringify({ error: 'Method not allowed' }));
+        return res.json({ error: 'Method not allowed' }, 405);
     }
 };
