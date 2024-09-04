@@ -46,9 +46,9 @@ export default async ({ req, res, log, error }) => {
                 try {
                     try {
                         const response = await openai.chat.completions.create({
-                            model: 'gpt-4o-mini',
-                            messages: [{ role: 'user', content: prompt }],
-                            max_tokens: 500,
+                            model: 'text-davinci-003',
+                            prompt: prompt,
+                            max_tokens: 500
                         });
                     } catch (error) {
                         console.log(error);
