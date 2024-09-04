@@ -41,7 +41,7 @@ export default async ({ req, res, log, error }) => {
                 const Source = attr.Source;
                 const name = attr.name;
 
-                const prompt = `Please visit the following URL: ${Source} and provide a concise summary of the content on that webpage. Focus on the key points, main arguments, and any relevant details or conclusions. The summary should be clear and easy to understand`; /// Prompt for GPT-3
+                const prompt = `Please visit the following URL: ${Source} and provide a concise summary of the content on that webpage. Focus on the key points, main arguments, and any relevant details or conclusions. The summary should be clear and easy to understand.`; /// Prompt for GPT-3
 
                 try {
                     const response = await openai.chat.completions.create({
@@ -49,6 +49,8 @@ export default async ({ req, res, log, error }) => {
                         max_tokens: parseInt(process.env.OPENAI_MAX_TOKENS ?? '512'),
                         messages: [{ role: 'user', content: prompt }],
                     });
+
+                    console.log('OpenAI API response:', response); // Log the response from OpenAI API
 
                     const gptOutput = response.choices[0].message.content;
 
@@ -64,8 +66,8 @@ export default async ({ req, res, log, error }) => {
 
                     return { ok: true, completion: gptOutput }; /// Return the completion
                 } catch (error) {
-                    console.error('Error calling OpenAI API:', error); // Log any errors from OpenAI API
-                    return { ok: false, error: 'Error calling OpenAI API' };
+                    console.error('Error calling OpenAI API:', error.response ? error.response.data : error.message); // Log detailed error from OpenAI API
+                    return { ok: false, error: 'Error calling OpenAI API', details: error.response ? error.response.data : error.message };
                 }
             }));
 
