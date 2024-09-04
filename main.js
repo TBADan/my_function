@@ -52,19 +52,25 @@ export default async ({ req, res, log, error }) => {
 
                     console.log('OpenAI API response:', response); // Log the response from OpenAI API
 
-                    const gptOutput = response.choices[0].message.content;
+                    // Check if the response structure is as expected
+                    if (response.choices && response.choices.length > 0 && response.choices[0].message && response.choices[0].message.content) {
+                        const gptOutput = response.choices[0].message.content;
 
-                    // Insert the summary into the new collection
-                    const document = await db.createDocument(DB_ID, COLLECTION_ID_SUMMARIES, 'unique()', {
-                        userId: userId,
-                        Source: Source,
-                        name: name,
-                        summary: gptOutput,
-                    });
+                        // Insert the summary into the new collection
+                        const document = await db.createDocument(DB_ID, COLLECTION_ID_SUMMARIES, 'unique()', {
+                            userId: userId,
+                            Source: Source,
+                            name: name,
+                            summary: gptOutput,
+                        });
 
-                    console.log('Document created in Appwrite:', document); // Log the document creation response
+                        console.log('Document created in Appwrite:', document); // Log the document creation response
 
-                    return { ok: true, completion: gptOutput }; /// Return the completion
+                        return { ok: true, completion: gptOutput }; /// Return the completion
+                    } else {
+                        console.error('Unexpected response structure from OpenAI API:', response);
+                        return { ok: false, error: 'Unexpected response structure from OpenAI API' };
+                    }
                 } catch (error) {
                     console.error('Error calling OpenAI API:', error.response ? error.response.data : error.message); // Log detailed error from OpenAI API
                     return { ok: false, error: 'Error calling OpenAI API', details: error.response ? error.response.data : error.message };
