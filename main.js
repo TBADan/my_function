@@ -22,12 +22,6 @@ export default async ({ req, res, log, error }) => {
     const db = new Databases(client);
 
     if (req.method == 'GET') {
-        const userId = req.query.userId; // Extract user ID from request query parameters
-
-        if (!userId) {
-            return res.json({ error: 'User ID is required' }, 400);
-        }
-
         try {
             const response = await db.listDocuments(
                 DB_ID,
@@ -60,9 +54,6 @@ export default async ({ req, res, log, error }) => {
 
                     // Insert the summary into the new collection
                     const document = await db.createDocument(DB_ID, COLLECTION_ID_SUMMARIES, {
-                        name:'Gather.AI',
-                        accountId: '66d79ff1000d0443d726',
-                        username:'Gather.AI',
                         Source: Source,
                         name: name,
                         summary: gptOutput,
