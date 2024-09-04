@@ -40,7 +40,7 @@ export default async ({ req, res, log, error }) => {
             const name = attr.name;
             const userId = attr.userId;
 
-            const prompt = `Please visit the following URL: ${Source} and provide a concise summary of the content on that webpage. Focus on the key points, main arguments, and any relevant details or conclusions. The summary should be clear and easy to understand.`; /// Prompt for GPT-3
+            const prompt = `Please visit the following URL: ${Source} and provide a concise summary of the content on that webpage. Focus on the key points, main arguments, and any relevant details or conclusions. The summary should be clear and easy to understand`; /// Prompt for GPT-3
 
             try {
                 const response = await openai.chat.completions.create({
