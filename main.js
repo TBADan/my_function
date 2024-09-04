@@ -1,11 +1,12 @@
 import OpenAI from 'openai';
-import  {Client, Databases} from 'node-appwrite';
+import  {Client, Databases, ID} from 'node-appwrite';
 
 
 ///Enviroment variables
 const PROJECT_ID = process.env.PROJECT_ID
 const DB_ID = process.env.DB_ID
 const COLLECTION_ID_CONNECTIONS = process.env.COLLECTION_ID_CONNECTIONS
+const COLLECTION_ID_POSTS = process.env.COLLECTION_ID_POSTS
 
 ///OpenAI
 const openai = new OpenAI({
@@ -54,7 +55,7 @@ export default async ({req, res, log, error})=>{
             }
             const response = await db.createDocument(
                 DB_ID,
-                COLLECTION_ID_CONNECTIONS,
+                COLLECTION_ID_POSTS,
                 ID.unique(),
                 {
                     creator: '66d79ff1003613b53ce1',
