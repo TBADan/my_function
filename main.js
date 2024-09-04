@@ -50,8 +50,6 @@ export default async ({ req, res, log, error }) => {
                         messages: [{ role: 'user', content: prompt }],
                     });
 
-                    console.log('OpenAI API response:', response); // Log the response from OpenAI API
-
                     const gptOutput = response.choices[0].message.content;
 
                     // Insert the summary into the new collection
