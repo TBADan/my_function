@@ -22,7 +22,6 @@ export default async ({ req, res, log, error }) => {
     const db = new Databases(client);
 
     if (req.method == 'GET') {
-        const userId = req.query.userId; // Extract user ID from request query parameters
 
         try {
             const response = await db.listDocuments(
