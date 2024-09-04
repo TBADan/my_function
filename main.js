@@ -22,6 +22,8 @@ export default async ({ req, res, log, error }) => {
     const db = new Databases(client);
 
     if (req.method == 'GET') {
+        const userId = req.query.userId; // Extract user ID from request query parameters
+
         try {
             const response = await db.listDocuments(
                 DB_ID,
@@ -39,7 +41,7 @@ export default async ({ req, res, log, error }) => {
                 const Source = attr.Source;
                 const name = attr.name;
 
-                const prompt = `Please visit the following URL: ${Source} and provide a concise summary of the content on that webpage. Focus on the key points, main arguments, and any relevant details or conclusions. The summary should be clear and easy to understand`; /// Prompt for GPT-3
+                const prompt = `Please visit the following URL: ${Source} and provide a concise summary of the content on that webpage. Focus on the key points, main arguments, and any relevant details or conclusions. The summary should be clear and easy to understand.`; /// Prompt for GPT-3
 
                 try {
                     const response = await openai.chat.completions.create({
@@ -54,6 +56,7 @@ export default async ({ req, res, log, error }) => {
 
                     // Insert the summary into the new collection
                     const document = await db.createDocument(DB_ID, COLLECTION_ID_SUMMARIES, {
+                        userId: userId,
                         Source: Source,
                         name: name,
                         summary: gptOutput,
@@ -63,7 +66,7 @@ export default async ({ req, res, log, error }) => {
 
                     return { ok: true, completion: gptOutput }; /// Return the completion
                 } catch (error) {
-                    console.error('Error calling OpenAI API:', error.message); // Log any errors from OpenAI API
+                    console.error('Error calling OpenAI API:', error); // Log any errors from OpenAI API
                     return { ok: false, error: 'Error calling OpenAI API' };
                 }
             }));
