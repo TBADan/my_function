@@ -55,7 +55,7 @@ export default async ({ req, res, log, error }) => {
                     const gptOutput = response.choices[0].message.content;
 
                     // Insert the summary into the new collection
-                    const document = await db.createDocument(DB_ID, COLLECTION_ID_SUMMARIES, {
+                    const document = await db.createDocument(DB_ID, COLLECTION_ID_SUMMARIES, 'unique()', {
                         userId: userId,
                         Source: Source,
                         name: name,
