@@ -22,48 +22,65 @@ export default async ({ req, res, log, error }) => {
     const db = new Databases(client);
 
     if (req.method == 'GET') {
-        const response = await db.listDocuments(
-            DB_ID,
-            COLLECTION_ID_CONNECTIONS
-        );
+        const userId = req.query.userId; // Extract user ID from request query parameters
 
-        const documents = response.documents;
+        if (!userId) {
+            return res.status(400).json({ error: 'User ID is required' });
+        }
 
-        const specificAttributes = documents.map(doc => ({
-            Source: doc.Source,
-            name: doc.Name,
-            userId: doc.userId, // Assuming userId is part of the document
-        }));
+        try {
+            const response = await db.listDocuments(
+                DB_ID,
+                COLLECTION_ID_CONNECTIONS
+            );
 
-        const responses = await Promise.all(specificAttributes.map(async attr => {
-            const Source = attr.Source;
-            const name = attr.name;
-            const userId = attr.userId;
+            const documents = response.documents;
 
-            const prompt = `Please visit the following URL: ${Source} and provide a concise summary of the content on that webpage. Focus on the key points, main arguments, and any relevant details or conclusions. The summary should be clear and easy to understand`; /// Prompt for GPT-3
+            const specificAttributes = documents.map(doc => ({
+                Source: doc.Source,
+                name: doc.Name,
+            }));
 
-            try {
-                const response = await openai.chat.completions.create({
-                    model: 'gpt-3.5-turbo',
-                    max_tokens: parseInt(process.env.OPENAI_MAX_TOKENS ?? '512'),
-                    messages: [{ role: 'user', content: prompt }],
-                });
-                const gptOutput = response.choices[0].message.content;
+            const responses = await Promise.all(specificAttributes.map(async attr => {
+                const Source = attr.Source;
+                const name = attr.name;
 
-                // Insert the summary into the new collection
-                await db.createDocument(DB_ID, COLLECTION_ID_SUMMARIES, {
-                    userId: '66d79ff1003613b53ce1',
-                    Source: Source,
-                    summary: gptOutput,
-                });
+                const prompt = `Please visit the following URL: ${Source} and provide a concise summary of the content on that webpage. Focus on the key points, main arguments, and any relevant details or conclusions. The summary should be clear and easy to understand.`; /// Prompt for GPT-3
 
-                return { ok: true, completion: gptOutput }; /// Return the completion
-            } catch (error) {
-                console.error('Error calling OpenAI API:', error);
-                return { ok: false, error: 'Internal Server Error' };
-            }
-        }));
+                try {
+                    const response = await openai.chat.completions.create({
+                        model: 'gpt-3.5-turbo',
+                        max_tokens: parseInt(process.env.OPENAI_MAX_TOKENS ?? '512'),
+                        messages: [{ role: 'user', content: prompt }],
+                    });
 
-        return res.json(responses, 200);
+                    console.log('OpenAI API response:', response); // Log the response from OpenAI API
+
+                    const gptOutput = response.choices[0].message.content;
+
+                    // Insert the summary into the new collection
+                    const document = await db.createDocument(DB_ID, COLLECTION_ID_SUMMARIES, {
+                        userId: userId,
+                        Source: Source,
+                        name: name,
+                        summary: gptOutput,
+                    });
+
+                    console.log('Document created in Appwrite:', document); // Log the document creation response
+
+                    return { ok: true, completion: gptOutput }; /// Return the completion
+                } catch (error) {
+                    console.error('Error calling OpenAI API:', error); // Log any errors from OpenAI API
+                    return { ok: false, error: 'Error calling OpenAI API' };
+                }
+            }));
+
+            return res.json(responses, 200);
+        } catch (error) {
+            console.error('Error interacting with Appwrite:', error); // Log any errors from Appwrite
+            return res.status(500).json({ ok: false, error: 'Error interacting with Appwrite' });
+        }
+    } else {
+        return res.status(405).json({ error: 'Method not allowed' });
     }
 };
