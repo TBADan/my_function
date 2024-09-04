@@ -44,45 +44,25 @@ export default async ({ req, res, log, error }) => {
                 const prompt = `Please visit the following URL: ${Source} and provide a concise summary of the content on that webpage. Focus on the key points, main arguments, and any relevant details or conclusions. The summary should be clear and easy to understand.`; /// Prompt for GPT-3
 
                 try {
-                    try {
-                        const response = await openai.chat.completions.create({
-                            model: 'gpt-3.5-turbo',
-                            max_tokens: parseInt(process.env.OPENAI_MAX_TOKENS ?? '512'),
-                            messages: [{ role: 'user', content: prompt }],
-                        });
-                    } catch (error) {
-                        console.error('Error interacting with 01', error);
-                    }
+                    const response = await openai.chat.completions.create({
+                        model: 'gpt-3.5-turbo',
+                        max_tokens: parseInt(process.env.OPENAI_MAX_TOKENS ?? '512'),
+                        messages: [{ role: 'user', content: prompt }],
+                    });
 
-                    try {
-                        console.log('OpenAI API response:', response); // Log the response from OpenAI API
-                    } catch (error) {
-                        console.error('Error interacting with 02', error);
-                    }
+                    console.log('OpenAI API response:', response); // Log the response from OpenAI API
 
-                    try {
-                        const gptOutput = response.choices[0].message.content;
-                    } catch (error) {
-                        console.error('Error interacting with 03', error);
-                    }
+                    const gptOutput = response.choices[0].message.content;
 
                     // Insert the summary into the new collection
-                    try {
-                        const document = await db.createDocument(DB_ID, COLLECTION_ID_SUMMARIES, 'unique()', {
-                            userId: userId,
-                            Source: Source,
-                            name: name,
-                            summary: gptOutput,
-                        });
-                    } catch (error) {
-                        console.error('Error interacting with 04', error);
-                    }
+                    const document = await db.createDocument(DB_ID, COLLECTION_ID_SUMMARIES, 'unique()', {
+                        userId: userId,
+                        Source: Source,
+                        name: name,
+                        summary: gptOutput,
+                    });
 
-                    try {
-                        console.log('Document created in Appwrite:', document); // Log the document creation response
-                    } catch (error) {
-                        console.error('Error interacting with 05', error);
-                    }
+                    console.log('Document created in Appwrite:', document); // Log the document creation response
 
                     return { ok: true, completion: gptOutput }; /// Return the completion
                 } catch (error) {
