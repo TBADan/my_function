@@ -63,7 +63,7 @@ export default async ({ req, res, log, error }) => {
 
                     return { ok: true, completion: gptOutput }; /// Return the completion
                 } catch (error) {
-                    console.error('Error calling OpenAI API:', error); // Log any errors from OpenAI API
+                    console.error('Error calling OpenAI API:', error.response ? error.response.data : error.message); // Log detailed error from OpenAI API
                     return { ok: false, error: 'Error calling OpenAI API' };
                 }
             }));
