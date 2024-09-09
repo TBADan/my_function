@@ -14,11 +14,13 @@ const openai = new OpenAI({
 
 // Function
 export default async ({ req, res, log, error }) => {
-  // Get the document data from the event payload
-  const document = req.payload; // This will contain the newly added document details
+  // **This entire function is triggered by the event, not by a GET request**
 
-  const Source = document.Source; // Assuming the source URL is stored in a field named "Source"
-  const name = document.Name; // Assuming the document name is stored in a field named "Name" (optional)
+  // Get the document data from the event payload (**automatic on document creation**)
+  const document = req.payload;
+
+  const Source = document.Source; // Replace with your actual field name
+  const name = document.Name; // Optional
 
   const prompt = `Please visit the following URL: ${Source} and provide a concise summary of the content on that webpage. Focus on the key points, main arguments, and any relevant details or conclusions. The summary should be clear and easy to understand.`;
 
@@ -45,6 +47,6 @@ export default async ({ req, res, log, error }) => {
     return res.json({ success: true, message: 'Summary created successfully' }, 200); // Or return a more detailed response
   } catch (error) {
     console.error('Error calling OpenAI API:', error);
-    return res.json({ success: false, error: 'Internal Server Error' }, 500); // Provide informative error messages
+    return res.json({ success: false, error: 'Internal Server Error' }, 500);
   }
 };
