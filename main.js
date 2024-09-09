@@ -60,7 +60,6 @@ export default async ({ req, res, log, error }) => {
           }
         );
 
-        return dbResponse; // Return the entire response object
       } catch (error) {
         console.error('Error calling OpenAI API:', error);
         return { ok: false, error: 'Internal Server Error', details: error.message }; // Provide more specific error details
