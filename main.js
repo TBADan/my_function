@@ -24,19 +24,17 @@ export default async ({ req, res, log, error }) => {
   if (req.method === 'GET') {
     const response = await db.listDocuments(
       DB_ID,
-      COLLECTION_ID_CONNECTIONS
+      COLLECTION_ID_CONNECTIONS,
+      { limit: 1 } // Limit to one document
     );
 
     const documents = response.documents;
 
-    const specificAttributes = documents.map(doc => ({
-      Source: doc.Source,
-      name: doc.Name,
-    }));
+    if (documents.length > 0) {
+      const specificAttributes = documents[0]; // Take the first document
 
-    const responses = await Promise.all(specificAttributes.map(async attr => {
-      const Source = attr.Source;
-      const name = attr.name;
+      const Source = specificAttributes.Source;
+      const name = specificAttributes.Name;
 
       const prompt = `Please visit the following URL: ${Source} and provide a concise summary of the content on that webpage. Focus on the key points, main arguments, and any relevant details or conclusions. The summary should be clear and easy to understand.`;
 
@@ -60,13 +58,13 @@ export default async ({ req, res, log, error }) => {
           }
         );
 
-        return dbResponse; // Return the entire response object
+        return res.json(dbResponse, 200); // Return the single response
       } catch (error) {
         console.error('Error calling OpenAI API:', error);
         return { ok: false, error: 'Internal Server Error', details: error.message }; // Provide more specific error details
       }
-    }));
-
-    return res.json(responses, 200);
+    } else {
+      return res.status(404).json({ error: 'No documents found in the connections collection' });
+    }
   }
 };
