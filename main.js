@@ -49,12 +49,6 @@ export default async ({ req, res, log, error }) => {
 
         const gptOutput = response.choices[0].message.content;
 
-        
-      } catch (error) {
-        console.error('Error calling OpenAI API:', error);
-        return { ok: false, error: 'Internal Server Error', details: error.message }; // Provide more specific error details
-      }
-      try{
         const dbResponse = await db.createDocument(
           DB_ID,
           COLLECTION_ID_POSTS,
@@ -66,12 +60,13 @@ export default async ({ req, res, log, error }) => {
           }
         );
 
+        return dbResponse; // Return the entire response object
       } catch (error) {
-        console.error('Error calling Appwrite API:', error);
+        console.error('Error calling OpenAI API:', error);
         return { ok: false, error: 'Internal Server Error', details: error.message }; // Provide more specific error details
       }
     }));
-    
+
     return res.json(responses, 200);
   }
 };
