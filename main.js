@@ -14,59 +14,37 @@ const openai = new OpenAI({
 
 // Function
 export default async ({ req, res, log, error }) => {
-  const client = new Client();
-  client
-    .setEndpoint('https://cloud.appwrite.io/v1')
-    .setProject(PROJECT_ID);
+  // Get the document data from the event payload
+  const document = req.payload; // This will contain the newly added document details
 
-  const db = new Databases(client);
+  const Source = document.Source; // Assuming the source URL is stored in a field named "Source"
+  const name = document.Name; // Assuming the document name is stored in a field named "Name" (optional)
 
-  if (req.method === 'GET') {
-    const response = await db.listDocuments(
+  const prompt = `Please visit the following URL: ${Source} and provide a concise summary of the content on that webpage. Focus on the key points, main arguments, and any relevant details or conclusions. The summary should be clear and easy to understand.`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      max_tokens: parseInt(process.env.OPENAI_MAX_TOKENS ?? '512'),
+      messages: [{ role: 'user', content: prompt }],
+    });
+
+    const gptOutput = response.choices[0].message.content;
+
+    const dbResponse = await db.createDocument(
       DB_ID,
-      COLLECTION_ID_CONNECTIONS
+      COLLECTION_ID_POSTS,
+      ID.unique(),
+      {
+        creator: '66d79ff1003613b53ce1',
+        caption: gptOutput,
+        location: Source,
+      }
     );
 
-    const documents = response.documents;
-
-    const specificAttributes = documents.map(doc => ({
-      Source: doc.Source,
-      name: doc.Name,
-    }));
-
-    const responses = await Promise.all(specificAttributes.map(async attr => {
-      const Source = attr.Source;
-      const name = attr.name;
-
-      const prompt = `Please visit the following URL: ${Source} and provide a concise summary of the content on that webpage. Focus on the key points, main arguments, and any relevant details or conclusions. The summary should be clear and easy to understand.`;
-
-      try {
-        const response = await openai.chat.completions.create({
-          model: 'gpt-3.5-turbo',
-          max_tokens: parseInt(process.env.OPENAI_MAX_TOKENS ?? '512'),
-          messages: [{ role: 'user', content: prompt }],
-        });
-
-        const gptOutput = response.choices[0].message.content;
-
-        const dbResponse = await db.createDocument(
-          DB_ID,
-          COLLECTION_ID_POSTS,
-          ID.unique(),
-          {
-            creator: '66d79ff1003613b53ce1',
-            caption: gptOutput,
-            location: Source,
-          }
-        );
-
-        return dbResponse; // Return the entire response object
-      } catch (error) {
-        console.error('Error calling OpenAI API:', error);
-        return { ok: false, error: 'Internal Server Error', details: error.message }; // Provide more specific error details
-      }
-    }));
-
-    return res.json(responses, 200);
+    return res.json({ success: true, message: 'Summary created successfully' }, 200); // Or return a more detailed response
+  } catch (error) {
+    console.error('Error calling OpenAI API:', error);
+    return res.json({ success: false, error: 'Internal Server Error' }, 500); // Provide informative error messages
   }
 };
