@@ -29,24 +29,20 @@ export default async ({ req, res, log, error }) => {
 
     const documents = response.documents;
 
-    const specificAttributes = documents.map(doc => ({
-      Source: doc.Source,
-      name: doc.Name,
-    }));
+    // Extract and filter out duplicate 'Source' values
+    const uniqueSources = Array.from(new Set(documents.map(doc => doc.Source)));
 
-    const responses = await Promise.all(specificAttributes.map(async attr => {
-      const Source = attr.Source;
-
+    const responses = await Promise.all(uniqueSources.map(async Source => {
       const prompt = `Please visit the following URL: ${Source} and provide a concise summary of the content on that webpage. Focus on the key points, main arguments, and any relevant details or conclusions. The summary should be clear and easy to understand.`;
 
       try {
-        const response = await openai.chat.completions.create({
+        const aiResponse = await openai.chat.completions.create({
           model: 'gpt-3.5-turbo',
           max_tokens: parseInt(process.env.OPENAI_MAX_TOKENS ?? '512'),
           messages: [{ role: 'user', content: prompt }],
         });
 
-        const gptOutput = response.choices[0].message.content;
+        const gptOutput = aiResponse.choices[0].message.content;
 
         const dbResponse = await db.createDocument(
           DB_ID,
@@ -59,9 +55,10 @@ export default async ({ req, res, log, error }) => {
           }
         );
 
+        return dbResponse;
       } catch (error) {
         console.error('Error calling OpenAI API:', error);
-        return { ok: false, error: 'Internal Server Error', details: error.message }; // Provide more specific error details
+        return { ok: false, error: 'Internal Server Error', details: error.message };
       }
     }));
 
