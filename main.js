@@ -33,7 +33,7 @@ export default async ({ req, res, log, error }) => {
     const uniqueSources = Array.from(new Set(documents.map(doc => doc.Source)));
 
     const responses = await Promise.all(uniqueSources.map(async Source => {
-      const prompt = `Please visit the following URL: ${Source} and provide a concise summary of the content on that webpage. Focus on the key points, main arguments, and any relevant details or conclusions. The summary should be clear and easy to understand.`;
+      const prompt = `Visit the following URL: ${Source}. Please read and analyze the content on the webpage. Summarize the main key points and core information from the website in a concise format. The summary should be brief, clear, and highlight only the most important details presented on the page.`;
 
       try {
         const aiResponse = await openai.chat.completions.create({
