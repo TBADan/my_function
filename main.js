@@ -56,7 +56,15 @@ export default async ({ req, res, log, error }) => {
           }
         );
 
-        return dbResponse;
+        return dbUpdateResponse = await db.updateDocument(
+          DB_ID,
+          COLLECTION_ID_CONNECTIONS,
+          dbResponse.$id,
+          {
+            ...dbResponse,
+            Scraped: true,
+          }
+        );
       } catch (error) {
         console.error('Error calling OpenAI API:', error);
         return { ok: false, error: 'Internal Server Error', details: error.message };
