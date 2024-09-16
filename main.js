@@ -32,7 +32,10 @@ export default async ({ req, res, log, error }) => {
     // Extract and filter out duplicate 'Source' values
     const uniqueSources = Array.from(new Set(documents.map(doc => doc.Source)));
 
-    const responses = await Promise.all(uniqueSources.map(async Source => {
+    const responses = await Promise.all(documents.map(async doc => {
+      const Source = doc.Source;
+      const documentId = doc.$id; // Store the document ID
+
       const prompt = `Visit the following URL: ${Source} Please read and analyze the content on the webpage. Summarize the main key points and core information from the website in a concise format. The summary should be brief, clear, and highlight only the most important details presented on the page.`;
 
       try {
@@ -44,6 +47,7 @@ export default async ({ req, res, log, error }) => {
 
         const gptOutput = aiResponse.choices[0].message.content;
 
+        // Create a new document in the COLLECTION_ID_POSTS collection
         const dbResponse = await db.createDocument(
           DB_ID,
           COLLECTION_ID_POSTS,
@@ -56,15 +60,17 @@ export default async ({ req, res, log, error }) => {
           }
         );
 
-        return dbUpdateResponse = await db.updateDocument(
+        // Update the existing document in the COLLECTION_ID_CONNECTIONS collection
+        const dbUpdateResponse = await db.updateDocument(
           DB_ID,
           COLLECTION_ID_CONNECTIONS,
-          dbResponse.$id,
+          documentId, // Use the stored document ID
           {
-            ...dbResponse,
             Scraped: true,
           }
         );
+
+        return dbUpdateResponse;
       } catch (error) {
         console.error('Error calling OpenAI API:', error);
         return { ok: false, error: 'Internal Server Error', details: error.message };
@@ -72,5 +78,7 @@ export default async ({ req, res, log, error }) => {
     }));
 
     return res.json(responses, 200);
+  } else {
+    return res.json({ error: 'Method not allowed' }, 405);
   }
 };
