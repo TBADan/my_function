@@ -52,6 +52,7 @@ export default async ({ req, res, log, error }) => {
             creator: '66d79ff1003613b53ce1',
             caption: gptOutput,
             location: Source,
+            AI: true,
           }
         );
 
