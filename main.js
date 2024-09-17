@@ -36,7 +36,7 @@ export default async ({ req, res, log, error }) => {
       const responses = await Promise.all(documents.map(async doc => {
         const Source = doc.Source;
         const documentId = doc.$id; // Store the document ID
-        const author = doc.author; // Store the author
+        const author = doc.userId; // Store the author
 
         // Log the author to verify it is correctly populated
         console.log(`Processing document ID: ${documentId}, Author: ${author}`);
