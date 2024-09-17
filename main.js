@@ -37,7 +37,7 @@ export default async ({ req, res, log, error }) => {
       const responses = await Promise.all(documents.map(async doc => {
         const Source = doc.Source;
         const documentId = doc.$id; // Store the document ID
-        const author = doc.userId; // Store the author relationship ID
+        const creator = doc.author; // Store the author relationship ID
 
         // Log the author to verify it is correctly populated
         console.log(`Processing document ID: ${documentId}, Author: ${author}`);
@@ -66,7 +66,7 @@ export default async ({ req, res, log, error }) => {
             COLLECTION_ID_POSTS,
             ID.unique(),
             {
-              creator: author, // Use the author relationship ID
+              creator: creator, // Use the author relationship ID
               caption: gptOutput,
               location: Source,
               AI: true,
