@@ -30,13 +30,16 @@ export default async ({ req, res, log, error }) => {
 
       const documents = response.documents;
 
-      // Extract and filter out duplicate 'Source' values
-      const uniqueSources = Array.from(new Set(documents.map(doc => doc.Source)));
+      // Log the documents to verify their structure
+      console.log('Fetched documents:', documents);
 
       const responses = await Promise.all(documents.map(async doc => {
         const Source = doc.Source;
         const documentId = doc.$id; // Store the document ID
-        const author = doc.author;
+        const author = doc.author; // Store the author
+
+        // Log the author to verify it is correctly populated
+        console.log(`Processing document ID: ${documentId}, Author: ${author}`);
 
         const prompt = `Visit the following URL: ${Source} Please read and analyze the content on the webpage. Summarize the main key points and core information from the website in a concise format. The summary should be brief, clear, and highlight only the most important details presented on the page.`;
 
@@ -62,7 +65,7 @@ export default async ({ req, res, log, error }) => {
             COLLECTION_ID_POSTS,
             ID.unique(),
             {
-              creator: doc.author,
+              creator: author, // Use the author field
               caption: gptOutput,
               location: Source,
               AI: true,
