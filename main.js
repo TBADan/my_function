@@ -54,7 +54,7 @@ export default async ({ req, res, log, error }) => {
           COLLECTION_ID_POSTS,
           ID.unique(),
           {
-            creator: creator,
+            creator: '66d79ff1003613b53ce1',
             caption: gptOutput,
             location: Source,
             AI: true,
