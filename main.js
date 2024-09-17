@@ -35,7 +35,7 @@ export default async ({ req, res, log, error }) => {
     const responses = await Promise.all(documents.map(async doc => {
       const Source = doc.Source;
       const documentId = doc.$id; // Store the document ID
-      const creator = doc.creator;
+      const connectionCreator = doc.creator;
 
       const prompt = `Visit the following URL: ${Source} Please read and analyze the content on the webpage. Summarize the main key points and core information from the website in a concise format. The summary should be brief, clear, and highlight only the most important details presented on the page.`;
 
@@ -54,7 +54,7 @@ export default async ({ req, res, log, error }) => {
           COLLECTION_ID_POSTS,
           ID.unique(),
           {
-            creator: '66d79ff1003613b53ce1',
+            creator: connectionCreator,
             caption: gptOutput,
             location: Source,
             AI: true,
