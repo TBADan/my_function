@@ -66,7 +66,7 @@ export default async ({ req, res, log, error }) => {
             COLLECTION_ID_POSTS,
             ID.unique(),
             {
-              creator: author, // Use the author relationship ID
+              creator: '66a8c813002f9a76d7a7', // Use the author relationship ID
               caption: gptOutput,
               location: Source,
               AI: true,
