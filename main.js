@@ -14,6 +14,8 @@ const openai = new OpenAI({
 
 // Function
 export default async ({ req, res, log, error }) => {
+  console.log('Function invoked'); // Log each invocation
+
   const client = new Client();
   client
     .setEndpoint('https://cloud.appwrite.io/v1')
@@ -60,13 +62,21 @@ export default async ({ req, res, log, error }) => {
 
           const gptOutput = aiResponse.choices[0].message.content;
 
+          // Log the data being sent to the database
+          console.log('Creating document with data:', {
+            creator: author, // Use the author relationship ID
+            caption: gptOutput,
+            location: Source,
+            AI: true,
+          });
+
           // Create a new document in the COLLECTION_ID_POSTS collection
           const dbResponse = await db.createDocument(
             DB_ID,
             COLLECTION_ID_POSTS,
             ID.unique(),
             {
-              creator: '66a8c813002f9a76d7a7', // Use the author relationship ID
+              creator: author, // Use the author relationship ID
               caption: gptOutput,
               location: Source,
               AI: true,
@@ -99,25 +109,3 @@ export default async ({ req, res, log, error }) => {
     return res.json({ error: 'Method not allowed' }, 405);
   }
 };
-
-// const newPost = await databases.createDocument(
-//   appwriteConfig.databaseId,
-//   appwriteConfig.postCollectionId,
-//   ID.unique(),
-//   {
-//     creator: post.userId,
-//     caption: post.caption,
-//     imageUrl: fileUrl,
-//     imageId: uploadedFile.$id,
-//     location: post.location,
-//     tags: tags,
-//   }
-// );
-
-// export type INewPost = {
-//   userId: string;
-//   caption: string;
-//   file: File[];
-//   location?: string;
-//   tags?: string;
-// };
