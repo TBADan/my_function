@@ -44,7 +44,7 @@ export default async ({ req, res, log, error }) => {
         // Log the author to verify it is correctly populated
         console.log(`Processing document ID: ${documentId}, Author: ${author}`);
 
-        const prompt = `Visit the following URL: ${Source} Please read and analyze the content on the webpage. Summarize the main key points and core information from the website in a concise format. The summary should be brief, clear, and highlight only the most important details presented on the page.`;
+        const prompt = `Visit the following URL: ${Source} Please read and analyze the content on the webpage. Summarize the main key points and core information from the website in a concise format. The summary should be brief, clear, and highlight only the most important details presented on the page. only give me the summary`;
 
         try {
           console.log(`Sending prompt to OpenAI: ${prompt}`);
