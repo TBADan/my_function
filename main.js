@@ -64,7 +64,7 @@ export default async ({ req, res, log, error }) => {
 
           // Log the data being sent to the database
           console.log('Creating document with data:', {
-            creator: author, // Use the author relationship ID
+            creator: '66d79ff1003613b53ce1', // Use the author relationship ID
             caption: gptOutput,
             location: Source,
             AI: true,
