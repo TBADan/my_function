@@ -14,8 +14,6 @@ const openai = new OpenAI({
 
 // Function
 export default async ({ req, res, log, error }) => {
-  console.log('Function invoked'); // Log each invocation
-
   const client = new Client();
   client
     .setEndpoint('https://cloud.appwrite.io/v1')
@@ -44,7 +42,7 @@ export default async ({ req, res, log, error }) => {
         // Log the author to verify it is correctly populated
         console.log(`Processing document ID: ${documentId}, Author: ${author}`);
 
-        const prompt = `Visit the following URL: ${Source} Please read and analyze the content on the webpage. Summarize the main key points and core information from the website in a concise format. The summary should be brief, clear, and highlight only the most important details presented on the page. only give me the summary`;
+        const prompt = `Visit the following URL: ${Source} Please read and analyze the content on the webpage. Summarize the main key points and core information from the website in a concise format. The summary should be brief, clear, and highlight only the most important details presented on the page.`;
 
         try {
           console.log(`Sending prompt to OpenAI: ${prompt}`);
@@ -62,21 +60,13 @@ export default async ({ req, res, log, error }) => {
 
           const gptOutput = aiResponse.choices[0].message.content;
 
-          // Log the data being sent to the database
-          console.log('Creating document with data:', {
-            creator: '66d79ff1003613b53ce1', // Use the author relationship ID
-            caption: gptOutput,
-            location: Source,
-            AI: true,
-          });
-
           // Create a new document in the COLLECTION_ID_POSTS collection
           const dbResponse = await db.createDocument(
             DB_ID,
             COLLECTION_ID_POSTS,
             ID.unique(),
             {
-              creator: author, // Use the author relationship ID
+              creator: '66a8c813002f9a76d7a7', // Use the author relationship ID
               caption: gptOutput,
               location: Source,
               AI: true,
@@ -109,3 +99,25 @@ export default async ({ req, res, log, error }) => {
     return res.json({ error: 'Method not allowed' }, 405);
   }
 };
+
+// const newPost = await databases.createDocument(
+//   appwriteConfig.databaseId,
+//   appwriteConfig.postCollectionId,
+//   ID.unique(),
+//   {
+//     creator: post.userId,
+//     caption: post.caption,
+//     imageUrl: fileUrl,
+//     imageId: uploadedFile.$id,
+//     location: post.location,
+//     tags: tags,
+//   }
+// );
+
+// export type INewPost = {
+//   userId: string;
+//   caption: string;
+//   file: File[];
+//   location?: string;
+//   tags?: string;
+// };
