@@ -24,7 +24,7 @@ export default async ({ req, res, log, error }) => {
 
   const db = new Databases(client);
 
-  if (req.method === 'GET') {
+  if (req.method === 'POST') {
     try {
       const response = await db.listDocuments(
         DB_ID,
