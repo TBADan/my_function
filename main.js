@@ -89,9 +89,9 @@ export default async function main(req, res) {
     // Log the response from updating the document
     console.log('Document updated:', dbUpdateResponse);
 
-    return res.json({ success: true, dbResponse, dbUpdateResponse });
+    res.json({ success: true, dbResponse, dbUpdateResponse });
   } catch (error) {
     console.error('Error processing event:', error);
-    return res.json({ success: false, error: error.message });
+    res.json({ success: false, error: error.message });
   }
 }
