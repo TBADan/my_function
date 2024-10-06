@@ -13,7 +13,7 @@ const openai = new OpenAI({
 });
 
 // Function
-export default async function main(req, res) {
+export default async function main(req, res, log, error) {
   console.log('Function invoked'); // Log each invocation
 
   const client = new Client();
@@ -25,12 +25,14 @@ export default async function main(req, res) {
   const db = new Databases(client);
 
   try {
-    const payload = JSON.parse(req.payload);
-    console.log('Event payload:', payload);
+    const response = await db.listDocuments(
+      DB_ID,
+      COLLECTION_ID_CONNECTIONS
+    );
+    const documents = response.documents;
 
-    const documentId = payload.$id;
-    const Source = payload.Source;
-    const author = payload.author;
+      // Log the documents to verify their structure
+      console.log('Fetched documents:', documents);
 
     // Log the document details
     console.log(`Processing document ID: ${documentId}, Source: ${Source}, Author: ${author}`);
